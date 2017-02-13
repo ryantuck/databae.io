@@ -1,0 +1,31 @@
+
+	<div class="sidebar-content">
+
+		<a href="{{ .Site.BaseURL }}"><h1>{{ .Site.Title }}</h1></a>
+		<p>{{ .Site.Params.description }}</p>
+
+		{{ if .Site.Params.sidebarFreeText }}
+		<div class="sidebar-freetext">
+			<p>{{ .Site.Params.sidebarFreeText }}</p>
+		</div>
+		{{ end }}
+
+		<ul class="sidebar-menus">
+			{{ range .Site.Menus.main }}
+				<li>&#187; <a href="{{.URL}}">{{ .Name }}</a> {{ .Post }}</li>
+			{{end}}
+		</ul>
+
+		<div class="sidebar-recent hidden-xs">
+			<p>posts</p>
+			<ul>
+                {{ range sort (where .Site.Pages "Type" "post") "Title" }}
+				<li><a href="{{.Permalink}}">{{ .Title }}</a></li>
+				{{ end }}
+			</ul>
+		</div>
+
+        <div style="text-align:right">
+            <span><a target="_blank" href="https://github.com/ryantuck"><i class="fa fa-github fa-2x"></i></a></span>
+        </div>
+	</div>

@@ -1,0 +1,11 @@
+languageCode = "en-us"
+title = "databae.io"
+baseurl = "http://databae.io"
+theme = "strange-case"
+
+
+[params]
+    colorScheme="scheme-slate"
+    description = "beep boop"
+    sideBarFreeText = "helpful programming nuggets."
+    DateFormat = "2 Jan 2006"

@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>databae.io</title>
+    <link>http://databae.io/index.xml</link>
+    <description>Recent content on databae.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 12 Feb 2017 18:56:33 -0500</lastBuildDate>
+    <atom:link href="http://databae.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>sql basics</title>
+      <link>http://databae.io/post/sql-basics/</link>
+      <pubDate>Sun, 12 Feb 2017 18:56:33 -0500</pubDate>
+      
+      <guid>http://databae.io/post/sql-basics/</guid>
+      <description>
+
+&lt;h2 id=&#34;select&#34;&gt;select&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;select&lt;/code&gt; fields &lt;code&gt;from&lt;/code&gt; a table.&lt;/p&gt;
+
+&lt;p&gt;select all fields:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    *
+from
+    customers
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;select specific fields:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    name,
+    species
+from
+    pets
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;where&#34;&gt;where&lt;/h2&gt;
+
+&lt;p&gt;the &lt;code&gt;where&lt;/code&gt; clause is used for filtering data.&lt;/p&gt;
+
+&lt;p&gt;get all gerbils:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    *
+from
+    pets
+where
+    species = &#39;gerbil&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;get all gerbils that are older than 5:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    *
+from
+    pets
+where
+    species = &#39;gerbil&#39;
+    and
+    age &amp;gt; 5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;get all pets that are either a gerbil or a dog:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    *
+from
+    pets
+where
+    species = &#39;gerbil&#39;
+    or
+    species = &#39;dog&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;sum-count-and-group-by&#34;&gt;sum(), count(), and group by&lt;/h2&gt;
+
+&lt;p&gt;aggregate data using an aggregate function like &lt;code&gt;sum()&lt;/code&gt; or &lt;code&gt;count()&lt;/code&gt; in combination with the &lt;code&gt;group by&lt;/code&gt; clause.&lt;/p&gt;
+
+&lt;p&gt;count number of each species:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    species,
+    count(*)
+from
+    pets
+group by
+    species
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;get total quantity sold of each &lt;code&gt;item_id&lt;/code&gt; from all transactions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    item_id,
+    sum(quantity)
+from
+    transaction_items
+group by
+    item_id
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;order-by&#34;&gt;order by&lt;/h2&gt;
+
+&lt;p&gt;sort your results.&lt;/p&gt;
+
+&lt;p&gt;sort customer names:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    first,
+    last
+from
+    customers
+order by
+    last
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;sort items by price:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    name,
+    price
+from
+    items
+order by
+    price desc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;limit&#34;&gt;limit&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;limit&lt;/code&gt; the amount of results you return.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    *
+from
+    customers
+limit
+    5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;as&#34;&gt;as&lt;/h2&gt;
+
+&lt;p&gt;alias your field names &lt;code&gt;as&lt;/code&gt; a more descriptive name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    first as first_name,
+    last as last_name
+from
+    customers
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;joins&#34;&gt;joins&lt;/h2&gt;
+
+&lt;p&gt;the meat of SQL. &lt;code&gt;join&lt;/code&gt; data from one table to another &lt;code&gt;on&lt;/code&gt; a certain condition. specifically, we&amp;rsquo;ll use &lt;code&gt;inner join&lt;/code&gt;s for now. you can &lt;code&gt;join&lt;/code&gt; multiple tables together by repeating the clause.&lt;/p&gt;
+
+&lt;p&gt;note the need to preface field names with the table they belong to.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+    customers.first,
+    customers.last,
+    pets.species,
+    pets.name
+from
+    customers
+inner join
+    pets
+    on
+    customers.id = pets.owner_id
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;putting-it-all-together&#34;&gt;putting it all together!&lt;/h2&gt;
+
+&lt;p&gt;here&amp;rsquo;s a mega query that uses all of the above concepts.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;give a summary of the first 8 transactions Queen Bey made at the pet store since 2010&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select
+	transactions.date as transaction_date,
+	sum(items.price) as total_cost,
+	count(*) as number_of_items
+from 
+	transactions
+inner join
+	customers
+	on
+	customers.id = transactions.customer_id
+inner join
+	transaction_items
+	on
+	transactions.id = transaction_items.transaction_id
+inner join
+	items
+	on
+	items.id = transaction_items.item_id
+where
+	transactions.date &amp;gt;= &#39;2010-01-01&#39;
+	and
+	customers.first = &#39;beyonce&#39;
+group by
+	transactions.date
+order by
+	transactions.date
+limit
+	8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;additional-resources&#34;&gt;additional resources&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.w3schools.com/sql/sql_select.asp&#34;&gt;w3schools&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>information schema</title>
+      <link>http://databae.io/post/information-schema/</link>
+      <pubDate>Sun, 12 Feb 2017 18:54:57 -0500</pubDate>
+      
+      <guid>http://databae.io/post/information-schema/</guid>
+      <description>&lt;p&gt;Query the &lt;code&gt;information_schema&lt;/code&gt; to find tables and columns
+you&amp;rsquo;re looking for.&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/ryantuck/bce48a40e663df83bfe832904db3ed91.js&#34;&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>postgres json queries</title>
+      <link>http://databae.io/post/postgres-json-queries/</link>
+      <pubDate>Sun, 12 Feb 2017 18:53:57 -0500</pubDate>
+      
+      <guid>http://databae.io/post/postgres-json-queries/</guid>
+      <description>&lt;p&gt;You can shove &lt;code&gt;json&lt;/code&gt; into postgres. This is great until you
+have to report on it :)&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/ryantuck/de263704472b80d6ec801efef9a2880e.js&#34;&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>postgres admin queries</title>
+      <link>http://databae.io/post/postgres-admin-queries/</link>
+      <pubDate>Sun, 12 Feb 2017 18:52:09 -0500</pubDate>
+      
+      <guid>http://databae.io/post/postgres-admin-queries/</guid>
+      <description>&lt;p&gt;Some helpful postgres admin queries.&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/ryantuck/46de1eec35708201d88e6beee008839a.js&#34;&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>sql to csv</title>
+      <link>http://databae.io/post/sql-to-csv/</link>
+      <pubDate>Sun, 12 Feb 2017 18:48:51 -0500</pubDate>
+      
+      <guid>http://databae.io/post/sql-to-csv/</guid>
+      <description>&lt;p&gt;Had a hell of a time trying to get the results of a &lt;code&gt;.sql&lt;/code&gt;
+file to output to a csv. Here&amp;rsquo;s what I had to do:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+# executes a .sql file and outputs results to a .csv
+# ./sql_to_csv.sh my_query.sql output.csv
+
+CONN=&amp;quot;psql -U my_user -d my_db&amp;quot;
+
+# remove all semicolons and comments
+# replace newlines with spaces
+QUERY=&amp;quot;$(sed &#39;s/;//g;/^--/ d;s/--.*//g;&#39; $1 | tr &#39;\n&#39; &#39; &#39;)&amp;quot;
+echo &amp;quot;$QUERY&amp;quot;
+
+echo &amp;quot;\\copy ($QUERY) to &#39;$2&#39; with csv header&amp;quot; | $CONN &amp;gt; /dev/null
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So to make it work:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./sql_to_csv.sh my_query.sql output.csv
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>dumb birthdays</title>
+      <link>http://databae.io/post/dumb-birthdays/</link>
+      <pubDate>Sun, 12 Feb 2017 18:46:11 -0500</pubDate>
+      
+      <guid>http://databae.io/post/dumb-birthdays/</guid>
+      <description>
+
+&lt;p&gt;Made a thing for calculating dumb birthdays.&lt;/p&gt;
+
+&lt;p&gt;Call it like so:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://api.databae.io/birthdays/1989-04-11T10:20:00&#34;&gt;https://api.databae.io/birthdays/1989-04-11T10:20:00&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;code&#34;&gt;code&lt;/h2&gt;
+
+&lt;script src=&#34;https://gist.github.com/ryantuck/5125fbe4d5e8414ce6cd0e12fe96db1b.js&#34;&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ssh keygen</title>
+      <link>http://databae.io/post/ssh-keygen/</link>
+      <pubDate>Sun, 12 Feb 2017 18:32:54 -0500</pubDate>
+      
+      <guid>http://databae.io/post/ssh-keygen/</guid>
+      <description>
+
+&lt;h2 id=&#34;create-an-ssh-key-pair&#34;&gt;create an ssh key pair&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s how to create a key pair on a machine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh-keygen -t rsa -b 4096 -C &amp;quot;ryan@tuck.com&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To authorize that key as one you want to allow onto the
+machine:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cat ~/.ssh/new_key.pub &amp;gt;&amp;gt; ~/.ssh/authorized_keys
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>psql</title>
+      <link>http://databae.io/post/psql/</link>
+      <pubDate>Sun, 12 Feb 2017 18:24:39 -0500</pubDate>
+      
+      <guid>http://databae.io/post/psql/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;psql&lt;/code&gt; is a tool used for accessing postgres databases via
+the command line.&lt;/p&gt;
+
+&lt;h2 id=&#34;install&#34;&gt;install&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install postgresql
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;load-csv-into-sql-really-fast&#34;&gt;load csv into sql really fast&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;psql&lt;/code&gt; can load csv data into an existing table insanely
+fast. It requires that you have an existing table and a csv
+file that has the appropriate number of columns.&lt;/p&gt;
+
+&lt;p&gt;Assuming &lt;code&gt;test.csv&lt;/code&gt; is on your desktop and looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;a,b,c
+1,2,3
+4,5,6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And you&amp;rsquo;ve created a table in your database like so:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;create table test (
+    a integer,
+    b integer,
+    c integer
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then load that bad boy in using &lt;code&gt;\copy&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ psql
+&amp;gt; \copy test from /Users/ryan/test.csv csv header
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>todo cli</title>
+      <link>http://databae.io/post/todo-cli/</link>
+      <pubDate>Sun, 12 Feb 2017 14:41:21 -0500</pubDate>
+      
+      <guid>http://databae.io/post/todo-cli/</guid>
+      <description>
+
+&lt;p&gt;I wanted to manage my todos via the command line and didn&amp;rsquo;t
+know of any obvious solution. I really didn&amp;rsquo;t want to use
+anything that was too complicated or overkill. I basically
+just wanted to manage todos as easily as I would if I were
+just editing markdown files. So I made something painfully
+simple and it works really well for me.&lt;/p&gt;
+
+&lt;h2 id=&#34;markdown-files&#34;&gt;markdown files&lt;/h2&gt;
+
+&lt;p&gt;I started with a directory of markdown files.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir ~/todo
+vim ~/todo/work.md
+vim ~/todo/done.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;shell-script&#34;&gt;shell script&lt;/h2&gt;
+
+&lt;p&gt;Cool, now I can just edit those guys. Great. But I didn&amp;rsquo;t
+want to have to type &lt;code&gt;vim ~/todo/blah.md&lt;/code&gt; every time I
+wanted to edit a file. So I made a script.&lt;/p&gt;
+
+&lt;p&gt;I created &lt;code&gt;/usr/local/bin/todo&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+echo editing: $1
+vim ~/todo/$1.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then made it executable:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;chmod +x /usr/local/bin/todo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And now I can simply:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;todo work
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s nice because if the file already exists I&amp;rsquo;ll edit it
+and if not it will automatically create a new one. Simple
+functionality.&lt;/p&gt;
+
+&lt;h2 id=&#34;autocomplete&#34;&gt;autocomplete&lt;/h2&gt;
+
+&lt;p&gt;Once I started getting tons of files in my &lt;code&gt;~/todo&lt;/code&gt;
+directory, I wanted to enable autocomplete, especially so I
+wouldn&amp;rsquo;t have to type out long names. Turns out this is p
+easy.&lt;/p&gt;
+
+&lt;p&gt;In my &lt;code&gt;~/.bash_profile&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# simple todo autocomplete
+_todo_autocomplete()
+{
+    local cur opts
+    COMPREPLY=()
+    cur=&amp;quot;${COMP_WORDS[COMP_CWORD]}&amp;quot;
+    opts=&amp;quot;$(ls ~/todo | sed -e &#39;s/\.md//g&#39;)&amp;quot;
+    COMPREPLY=( $(compgen -W &amp;quot;${opts}&amp;quot; -- ${cur}) )
+    return 0
+}
+
+complete -F _todo_autocomplete todo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now I can type &lt;code&gt;todo [TAB]&lt;/code&gt; and see all options.&lt;/p&gt;
+
+&lt;p&gt;Basically, autocomplete seems like it&amp;rsquo;s a bunch of garbage
+boilerplate with the only really important part being what
+you set for the &lt;code&gt;opts&lt;/code&gt; variable. In my case, I wanted to
+remove the &lt;code&gt;.md&lt;/code&gt; extension from anything in my list because
+that&amp;rsquo;s just how I want to interact with these files:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;opts=&amp;quot;$(ls ~/todo | sed -e &#39;s/\.md//g&#39;)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;git&#34;&gt;git&lt;/h2&gt;
+
+&lt;p&gt;I wanted to share my active &lt;code&gt;work.md&lt;/code&gt; and &lt;code&gt;done.md&lt;/code&gt; files
+with my PM at work so he knows what I&amp;rsquo;m working on at any
+given time. So I made a github gist that I can then commit
+the files to, and they&amp;rsquo;re formatted all pretty because it&amp;rsquo;s
+markdown.&lt;/p&gt;
+
+&lt;p&gt;So I made a &lt;code&gt;~/todo/todo-gist&lt;/code&gt; directory and added the
+following script (&lt;code&gt;push.sh&lt;/code&gt;):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+
+cp ~/todo/work.md ~/todo/todo-gist/work.md
+cp ~/todo/done.md ~/todo/todo-gist/done.md
+
+d=$(date)
+echo $d
+
+cd ~/todo/todo-gist
+git add .
+git commit -m &amp;quot;$d&amp;quot;
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And to make my life even easier just added an alias to my
+bash profile to fire this guy off:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# push todo to gist
+alias push=&amp;quot;~/todo/todo-gist/push.sh&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
+
+&lt;p&gt;Now my workflow for managing todos looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;todo work
+todo done
+push
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;rsquo;s extremely extensible and painfully simple. No external
+dependencies - just editing text files. 🙏&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>home</title>
+      <link>http://databae.io/home/</link>
+      <pubDate>Sun, 12 Feb 2017 14:24:32 -0500</pubDate>
+      
+      <guid>http://databae.io/home/</guid>
+      <description>&lt;p&gt;Hi! Here are cool tips and things about computers, and a
+picture of Guy Fieri.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://databae.io/guy.png&#34; alt=&#34;oh yeah&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>sed</title>
+      <link>http://databae.io/post/sed/</link>
+      <pubDate>Sun, 12 Feb 2017 14:18:38 -0500</pubDate>
+      
+      <guid>http://databae.io/post/sed/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;sed&lt;/code&gt; is a cool tool for text manipulation.&lt;/p&gt;
+
+&lt;p&gt;test.txt:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;a
+b
+c
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;cat test.txt | sed -e &#39;s/a/blah/g&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;blah
+b
+c
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;edit-in-place&#34;&gt;edit in place&lt;/h2&gt;
+
+&lt;p&gt;The following will edit a file in-place using the &lt;code&gt;-i&lt;/code&gt; flag:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sed -i -e &#39;s/a/blah/g&#39; test.txt
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>about</title>
+      <link>http://databae.io/about/</link>
+      <pubDate>Sun, 12 Feb 2017 14:14:29 -0500</pubDate>
+      
+      <guid>http://databae.io/about/</guid>
+      <description>&lt;p&gt;Hoping this site is a handy tool for how to do things on a
+computer.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
