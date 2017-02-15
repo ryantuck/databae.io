@@ -6,8 +6,103 @@
     <description>Recent content in Posts on databae.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Feb 2017 18:56:33 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 14 Feb 2017 20:26:41 -0500</lastBuildDate>
     <atom:link href="http://databae.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>gspread</title>
+      <link>http://databae.io/post/gspread/</link>
+      <pubDate>Tue, 14 Feb 2017 20:26:41 -0500</pubDate>
+      
+      <guid>http://databae.io/post/gspread/</guid>
+      <description>
+
+&lt;p&gt;So you wanna pull some google sheets data into python?&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;gspread&lt;/code&gt; is a really handy python module for doing just
+that. There&amp;rsquo;s some authentication setup involved but it&amp;rsquo;s
+pretty straightforward.&lt;/p&gt;
+
+&lt;p&gt;Once you&amp;rsquo;ve authenticated, you can check out the &lt;code&gt;readme&lt;/code&gt;
+for basic usage for reading/writing to and from sheets over
+at &lt;a href=&#34;https://github.com/burnash/gspread&#34;&gt;https://github.com/burnash/gspread&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;setup&#34;&gt;setup&lt;/h2&gt;
+
+&lt;h3 id=&#34;creds&#34;&gt;creds&lt;/h3&gt;
+
+&lt;p&gt;You need to set up your credentials so you can access your
+google sheet. Fortunately this is pretty straightforward.&lt;/p&gt;
+
+&lt;p&gt;And the &lt;code&gt;gspread&lt;/code&gt; documentation also has these instructions
+&lt;a href=&#34;http://gspread.readthedocs.io/en/latest/oauth2.html&#34;&gt;documented
+here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I followed the instructions
+&lt;a href=&#34;https://developers.google.com/identity/protocols/application-default-credentials?authuser=1&#34;&gt;here&lt;/a&gt;
+but the &lt;strong&gt;tl;dr&lt;/strong&gt; is that you need to head over to the &lt;a href=&#34;https://console.developers.google.com/projectselector/apis/credentials&#34;&gt;API
+Console
+Credentials&lt;/a&gt;
+section of the google developers portal.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Select &amp;lsquo;create a project&amp;rsquo;. Give it a name. Yatta yatta
+yatta.&lt;/li&gt;
+&lt;li&gt;Select &amp;lsquo;create credentials&amp;rsquo; &amp;gt; &amp;lsquo;Service Account Key&amp;rsquo;. I
+think this is the easiest. It&amp;rsquo;ll basically give you a
+file to download.&lt;/li&gt;
+&lt;li&gt;Select &amp;lsquo;new service account&amp;rsquo; and give it the &amp;lsquo;Owner&amp;rsquo;
+role, along with some name.&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;json&lt;/code&gt; key type.&lt;/li&gt;
+&lt;li&gt;Hit &amp;lsquo;create&amp;rsquo;. This should download a &lt;code&gt;.json&lt;/code&gt; file to your
+computer.&lt;/li&gt;
+&lt;li&gt;Move that credentials file somewhere (let&amp;rsquo;s say
+&lt;code&gt;~/Desktop&lt;/code&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;share-a-sheet&#34;&gt;share a sheet&lt;/h3&gt;
+
+&lt;p&gt;You&amp;rsquo;ll need to share your sheet with the service account you
+just created. From the credentials page, you should see a
+link for &amp;lsquo;Manage Service Accounts&amp;rsquo;. Check that out and you
+should see your service account ID for the one you just
+created. It&amp;rsquo;ll look something like&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;rt-testing@123456.iam.gserviceaccount.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Share your sheet with that account. Boom.&lt;/p&gt;
+
+&lt;h2 id=&#34;code&#34;&gt;code&lt;/h2&gt;
+
+&lt;h3 id=&#34;install-stuff&#34;&gt;install stuff&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;pip install gspread oauth2client PyOpenSSL
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;pull-sheet&#34;&gt;pull sheet&lt;/h3&gt;
+
+&lt;p&gt;Now pull it! &lt;code&gt;gspread&lt;/code&gt; has great documentation for using the
+module but I&amp;rsquo;ve found setup to be a big pain in the ass, so
+I hope this post helps.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+# that filename path is the creds file you downloaded
+credentials = ServiceAccountCredentials.from_json_keyfile_name(
+    filename=&#39;/Users/ryan/Desktop/rt-testing-12345678.json&#39;,
+    scopes=&#39;https://spreadsheets.google.com/feeds&#39;,
+)
+
+gc = gspread.authorize(credentials)
+
+worksheet = gc.open(&#39;My Workbook Title&#39;).worksheet(&#39;some sheet title&#39;)
+
+records = worksheet.get_all_records()
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>sql basics</title>
