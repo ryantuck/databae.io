@@ -1,0 +1,4 @@
+#!/bin/bash
+
+hugo
+aws --profile rt s3 cp public/ s3://databae.io/ --recursive
