@@ -51,6 +51,8 @@
 				
 				<li><a href="http://databae.io/post/information-schema/">information schema</a></li>
 				
+				<li><a href="http://databae.io/post/n-choose-k/">n choose k</a></li>
+				
 				<li><a href="http://databae.io/post/postgres-admin-queries/">postgres admin queries</a></li>
 				
 				<li><a href="http://databae.io/post/postgres-json-queries/">postgres json queries</a></li>
@@ -63,9 +65,13 @@
 				
 				<li><a href="http://databae.io/post/sql-to-csv/">sql to csv</a></li>
 				
+				<li><a href="http://databae.io/post/sqlalchemy-stored-procs/">sqlalchemy and stored procs</a></li>
+				
 				<li><a href="http://databae.io/post/ssh-keygen/">ssh keygen</a></li>
 				
 				<li><a href="http://databae.io/post/todo-cli/">todo cli</a></li>
+				
+				<li><a href="http://databae.io/post/web-cli/">web cli</a></li>
 				
 			</ul>
 		</div>
@@ -79,6 +85,174 @@
 			</div>
 			<div class="col-sm-7 col-sm-offset-4 col-md-6 col-md-offset-3 col-lg-5 col-lg-offset-3 content">
 
+				
+				<div class="post">
+
+					<div class="post-heading">
+						<h1><a href="http://databae.io/post/n-choose-k/">n choose k</a></h1>
+						<span>25 Feb 2017</span>
+					</div>
+
+					<p>Stumbled upon this and thought it was cool. There&rsquo;s probably
+just some math from high school that i&rsquo;m forgetting about
+that explains this in very simple terms.</p>
+
+<p>If I have a set of <code>N</code> values:</p>
+
+<pre><code>[0,1,2,3]
+</code></pre>
+
+<p>I can figure out the number of possible ways to choose <code>k</code>
+values from them using &lsquo;n-choose-k&rsquo;:</p>
+
+<pre><code>n_choose_k = N! / ( k! (N-k)! )
+</code></pre>
+
+<p>This gives rise to pascal&rsquo;s triangle:</p>
+
+<pre><code class="language-python">from scipy.special import comb
+ns = range(10)
+combos = [list(int(comb(n,i)) for i in range(n+1)) for n in ns]
+</code></pre>
+
+<p>combos:</p>
+
+<pre><code>[[1],
+ [1, 1],
+ [1, 2, 1],
+ [1, 3, 3, 1],
+ [1, 4, 6, 4, 1],
+ [1, 5, 10, 10, 5, 1],
+ [1, 6, 15, 20, 15, 6, 1],
+ [1, 7, 21, 35, 35, 21, 7, 1],
+ [1, 8, 28, 56, 70, 56, 28, 8, 1],
+ [1, 9, 36, 84, 126, 126, 84, 36, 9, 1]]
+</code></pre>
+
+<p>For another problem, I thought I needed to sum up all of
+these possible combinations for a given <code>N</code>:</p>
+
+<pre><code class="language-python">from scipy.special import comb
+ns = range(10)
+combos = [sum(comb(n,i) for i in range(n+1)) for n in ns]
+</code></pre>
+
+<p>And holy crow, that&rsquo;s just <code>2^N</code>:</p>
+
+<pre><code>[1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+</code></pre>
+
+
+				</div>
+				
+				<div class="post">
+
+					<div class="post-heading">
+						<h1><a href="http://databae.io/post/web-cli/">web cli</a></h1>
+						<span>17 Feb 2017</span>
+					</div>
+
+					<p>Because switching to chrome and creating a new tab is just
+too much.</p>
+
+<pre><code class="language-bash">#!/bin/bash
+open https://$1.com
+</code></pre>
+
+<p>usage:</p>
+
+<pre><code>web google
+web github
+</code></pre>
+
+
+				</div>
+				
+				<div class="post">
+
+					<div class="post-heading">
+						<h1><a href="http://databae.io/post/sqlalchemy-stored-procs/">sqlalchemy and stored procs</a></h1>
+						<span>15 Feb 2017</span>
+					</div>
+
+					
+
+<p>Ran into a weird issue having to do with calling a stored
+procedure in postgres from python.</p>
+
+<p><strong>tldr</strong> - you have to explicitly <code>begin</code> and <code>commit</code>
+transactions that call stored procs because <code>select</code>
+statements don&rsquo;t normally explicitly get <code>commit</code>ted. We
+avoid this issue in <code>psql</code> because i guess those <code>select</code>
+statements actually do end up getting committed.</p>
+
+<h2 id="example">example</h2>
+
+<p>Here&rsquo;s a silly stored proc:</p>
+
+<pre><code class="language-sql">create function do_stuff()
+returns void as $$
+begin
+
+truncate table my_table;
+
+insert into my_table values
+    (1,2),
+    (3,4)
+;
+
+end;
+$$ language plpgsql;
+</code></pre>
+
+<p>To test if it works:</p>
+
+<ol>
+<li><code>truncate table my_table;</code></li>
+<li>run python script.</li>
+<li><code>select * from my_table;</code> and check whether the rows were
+inserted.</li>
+</ol>
+
+<h3 id="won-t-work">won&rsquo;t work</h3>
+
+<pre><code class="language-python">import dataset
+
+db = dataset.connect()
+db.query('select do_stuff();')
+</code></pre>
+
+<p>results:</p>
+
+<pre><code class="language-sql">select * from my_table; -- 0 rows
+</code></pre>
+
+<h3 id="will-work">will work</h3>
+
+<pre><code class="language-python">import dataset
+
+db = dataset.connect()
+db.begin()
+db.query('select do_stuff();')
+db.commit()
+</code></pre>
+
+<p>or, <code>dataset</code> lets you wrap all that up as a transaction:</p>
+
+<pre><code class="language-python">import dataset
+
+db = dataset.connect()
+with db as tx:
+    tx.query('select do_stuff();')
+</code></pre>
+
+<p>results:</p>
+
+<pre><code class="language-sql">select * from my_table; -- 2 rows (as expected)
+</code></pre>
+
+
+				</div>
 				
 				<div class="post">
 
@@ -477,213 +651,6 @@ echo &quot;\\copy ($QUERY) to '$2' with csv header&quot; | $CONN &gt; /dev/null
 <h2 id="code">code</h2>
 
 <script src="https://gist.github.com/ryantuck/5125fbe4d5e8414ce6cd0e12fe96db1b.js"></script>
-
-
-				</div>
-				
-				<div class="post">
-
-					<div class="post-heading">
-						<h1><a href="http://databae.io/post/ssh-keygen/">ssh keygen</a></h1>
-						<span>12 Feb 2017</span>
-					</div>
-
-					
-
-<h2 id="create-an-ssh-key-pair">create an ssh key pair</h2>
-
-<p>Here&rsquo;s how to create a key pair on a machine.</p>
-
-<pre><code>ssh-keygen -t rsa -b 4096 -C &quot;ryan@tuck.com&quot;
-</code></pre>
-
-<p>To authorize that key as one you want to allow onto the
-machine:</p>
-
-<pre><code>cat ~/.ssh/new_key.pub &gt;&gt; ~/.ssh/authorized_keys
-</code></pre>
-
-
-				</div>
-				
-				<div class="post">
-
-					<div class="post-heading">
-						<h1><a href="http://databae.io/post/psql/">psql</a></h1>
-						<span>12 Feb 2017</span>
-					</div>
-
-					
-
-<p><code>psql</code> is a tool used for accessing postgres databases via
-the command line.</p>
-
-<h2 id="install">install</h2>
-
-<pre><code>brew install postgresql
-</code></pre>
-
-<h2 id="load-csv-into-sql-really-fast">load csv into sql really fast</h2>
-
-<p><code>psql</code> can load csv data into an existing table insanely
-fast. It requires that you have an existing table and a csv
-file that has the appropriate number of columns.</p>
-
-<p>Assuming <code>test.csv</code> is on your desktop and looks like this:</p>
-
-<pre><code>a,b,c
-1,2,3
-4,5,6
-</code></pre>
-
-<p>And you&rsquo;ve created a table in your database like so:</p>
-
-<pre><code class="language-sql">create table test (
-    a integer,
-    b integer,
-    c integer
-);
-</code></pre>
-
-<p>Then load that bad boy in using <code>\copy</code>:</p>
-
-<pre><code>$ psql
-&gt; \copy test from /Users/ryan/test.csv csv header
-</code></pre>
-
-
-				</div>
-				
-				<div class="post">
-
-					<div class="post-heading">
-						<h1><a href="http://databae.io/post/todo-cli/">todo cli</a></h1>
-						<span>12 Feb 2017</span>
-					</div>
-
-					
-
-<p>I wanted to manage my todos via the command line and didn&rsquo;t
-know of any obvious solution. I really didn&rsquo;t want to use
-anything that was too complicated or overkill. I basically
-just wanted to manage todos as easily as I would if I were
-just editing markdown files. So I made something painfully
-simple and it works really well for me.</p>
-
-<h2 id="markdown-files">markdown files</h2>
-
-<p>I started with a directory of markdown files.</p>
-
-<pre><code>mkdir ~/todo
-vim ~/todo/work.md
-vim ~/todo/done.md
-</code></pre>
-
-<h2 id="shell-script">shell script</h2>
-
-<p>Cool, now I can just edit those guys. Great. But I didn&rsquo;t
-want to have to type <code>vim ~/todo/blah.md</code> every time I
-wanted to edit a file. So I made a script.</p>
-
-<p>I created <code>/usr/local/bin/todo</code>:</p>
-
-<pre><code>#!/bin/bash
-
-echo editing: $1
-vim ~/todo/$1.md
-</code></pre>
-
-<p>Then made it executable:</p>
-
-<pre><code>chmod +x /usr/local/bin/todo
-</code></pre>
-
-<p>And now I can simply:</p>
-
-<pre><code>todo work
-</code></pre>
-
-<p>It&rsquo;s nice because if the file already exists I&rsquo;ll edit it
-and if not it will automatically create a new one. Simple
-functionality.</p>
-
-<h2 id="autocomplete">autocomplete</h2>
-
-<p>Once I started getting tons of files in my <code>~/todo</code>
-directory, I wanted to enable autocomplete, especially so I
-wouldn&rsquo;t have to type out long names. Turns out this is p
-easy.</p>
-
-<p>In my <code>~/.bash_profile</code>:</p>
-
-<pre><code class="language-bash"># simple todo autocomplete
-_todo_autocomplete()
-{
-    local cur opts
-    COMPREPLY=()
-    cur=&quot;${COMP_WORDS[COMP_CWORD]}&quot;
-    opts=&quot;$(ls ~/todo | sed -e 's/\.md//g')&quot;
-    COMPREPLY=( $(compgen -W &quot;${opts}&quot; -- ${cur}) )
-    return 0
-}
-
-complete -F _todo_autocomplete todo
-</code></pre>
-
-<p>Now I can type <code>todo [TAB]</code> and see all options.</p>
-
-<p>Basically, autocomplete seems like it&rsquo;s a bunch of garbage
-boilerplate with the only really important part being what
-you set for the <code>opts</code> variable. In my case, I wanted to
-remove the <code>.md</code> extension from anything in my list because
-that&rsquo;s just how I want to interact with these files:</p>
-
-<pre><code>opts=&quot;$(ls ~/todo | sed -e 's/\.md//g')&quot;
-</code></pre>
-
-<h2 id="git">git</h2>
-
-<p>I wanted to share my active <code>work.md</code> and <code>done.md</code> files
-with my PM at work so he knows what I&rsquo;m working on at any
-given time. So I made a github gist that I can then commit
-the files to, and they&rsquo;re formatted all pretty because it&rsquo;s
-markdown.</p>
-
-<p>So I made a <code>~/todo/todo-gist</code> directory and added the
-following script (<code>push.sh</code>):</p>
-
-<pre><code class="language-bash">#!/bin/bash
-
-cp ~/todo/work.md ~/todo/todo-gist/work.md
-cp ~/todo/done.md ~/todo/todo-gist/done.md
-
-d=$(date)
-echo $d
-
-cd ~/todo/todo-gist
-git add .
-git commit -m &quot;$d&quot;
-git push origin master
-</code></pre>
-
-<p>And to make my life even easier just added an alias to my
-bash profile to fire this guy off:</p>
-
-<pre><code># push todo to gist
-alias push=&quot;~/todo/todo-gist/push.sh&quot;
-</code></pre>
-
-<h2 id="conclusion">conclusion</h2>
-
-<p>Now my workflow for managing todos looks like this:</p>
-
-<pre><code>todo work
-todo done
-push
-</code></pre>
-
-<p>It&rsquo;s extremely extensible and painfully simple. No external
-dependencies - just editing text files. 🙏</p>
 
 
 				</div>

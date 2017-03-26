@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://databae.io/post/n-choose-k/</loc>
+    <lastmod>2017-02-25T17:24:17-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://databae.io/post/web-cli/</loc>
+    <lastmod>2017-02-17T12:26:51-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://databae.io/post/sqlalchemy-stored-procs/</loc>
+    <lastmod>2017-02-15T13:49:49-05:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://databae.io/post/gspread/</loc>
     <lastmod>2017-02-14T20:26:41-05:00</lastmod>
   </url>
@@ -68,13 +83,13 @@
   
   <url>
     <loc>http://databae.io/post/</loc>
-    <lastmod>2017-02-14T20:26:41-05:00</lastmod>
+    <lastmod>2017-02-25T17:24:17-05:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://databae.io/</loc>
-    <lastmod>2017-02-14T20:26:41-05:00</lastmod>
+    <lastmod>2017-02-25T17:24:17-05:00</lastmod>
     <priority>0</priority>
   </url>
   

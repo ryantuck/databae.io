@@ -6,8 +6,170 @@
     <description>Recent content on databae.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 14 Feb 2017 20:26:41 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 25 Feb 2017 17:24:17 -0500</lastBuildDate>
     <atom:link href="http://databae.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>n choose k</title>
+      <link>http://databae.io/post/n-choose-k/</link>
+      <pubDate>Sat, 25 Feb 2017 17:24:17 -0500</pubDate>
+      
+      <guid>http://databae.io/post/n-choose-k/</guid>
+      <description>&lt;p&gt;Stumbled upon this and thought it was cool. There&amp;rsquo;s probably
+just some math from high school that i&amp;rsquo;m forgetting about
+that explains this in very simple terms.&lt;/p&gt;
+
+&lt;p&gt;If I have a set of &lt;code&gt;N&lt;/code&gt; values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[0,1,2,3]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I can figure out the number of possible ways to choose &lt;code&gt;k&lt;/code&gt;
+values from them using &amp;lsquo;n-choose-k&amp;rsquo;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;n_choose_k = N! / ( k! (N-k)! )
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gives rise to pascal&amp;rsquo;s triangle:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from scipy.special import comb
+ns = range(10)
+combos = [list(int(comb(n,i)) for i in range(n+1)) for n in ns]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;combos:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[[1],
+ [1, 1],
+ [1, 2, 1],
+ [1, 3, 3, 1],
+ [1, 4, 6, 4, 1],
+ [1, 5, 10, 10, 5, 1],
+ [1, 6, 15, 20, 15, 6, 1],
+ [1, 7, 21, 35, 35, 21, 7, 1],
+ [1, 8, 28, 56, 70, 56, 28, 8, 1],
+ [1, 9, 36, 84, 126, 126, 84, 36, 9, 1]]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For another problem, I thought I needed to sum up all of
+these possible combinations for a given &lt;code&gt;N&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from scipy.special import comb
+ns = range(10)
+combos = [sum(comb(n,i) for i in range(n+1)) for n in ns]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And holy crow, that&amp;rsquo;s just &lt;code&gt;2^N&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>web cli</title>
+      <link>http://databae.io/post/web-cli/</link>
+      <pubDate>Fri, 17 Feb 2017 12:26:51 -0500</pubDate>
+      
+      <guid>http://databae.io/post/web-cli/</guid>
+      <description>&lt;p&gt;Because switching to chrome and creating a new tab is just
+too much.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+open https://$1.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;usage:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;web google
+web github
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>sqlalchemy and stored procs</title>
+      <link>http://databae.io/post/sqlalchemy-stored-procs/</link>
+      <pubDate>Wed, 15 Feb 2017 13:49:49 -0500</pubDate>
+      
+      <guid>http://databae.io/post/sqlalchemy-stored-procs/</guid>
+      <description>
+
+&lt;p&gt;Ran into a weird issue having to do with calling a stored
+procedure in postgres from python.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;tldr&lt;/strong&gt; - you have to explicitly &lt;code&gt;begin&lt;/code&gt; and &lt;code&gt;commit&lt;/code&gt;
+transactions that call stored procs because &lt;code&gt;select&lt;/code&gt;
+statements don&amp;rsquo;t normally explicitly get &lt;code&gt;commit&lt;/code&gt;ted. We
+avoid this issue in &lt;code&gt;psql&lt;/code&gt; because i guess those &lt;code&gt;select&lt;/code&gt;
+statements actually do end up getting committed.&lt;/p&gt;
+
+&lt;h2 id=&#34;example&#34;&gt;example&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a silly stored proc:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;create function do_stuff()
+returns void as $$
+begin
+
+truncate table my_table;
+
+insert into my_table values
+    (1,2),
+    (3,4)
+;
+
+end;
+$$ language plpgsql;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To test if it works:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;truncate table my_table;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;run python script.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;select * from my_table;&lt;/code&gt; and check whether the rows were
+inserted.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;won-t-work&#34;&gt;won&amp;rsquo;t work&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import dataset
+
+db = dataset.connect()
+db.query(&#39;select do_stuff();&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;results:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select * from my_table; -- 0 rows
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;will-work&#34;&gt;will work&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import dataset
+
+db = dataset.connect()
+db.begin()
+db.query(&#39;select do_stuff();&#39;)
+db.commit()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or, &lt;code&gt;dataset&lt;/code&gt; lets you wrap all that up as a transaction:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import dataset
+
+db = dataset.connect()
+with db as tx:
+    tx.query(&#39;select do_stuff();&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;results:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select * from my_table; -- 2 rows (as expected)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>gspread</title>
@@ -643,17 +805,6 @@ c
 
 &lt;pre&gt;&lt;code&gt;sed -i -e &#39;s/a/blah/g&#39; test.txt
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>about</title>
-      <link>http://databae.io/about/</link>
-      <pubDate>Sun, 12 Feb 2017 14:14:29 -0500</pubDate>
-      
-      <guid>http://databae.io/about/</guid>
-      <description>&lt;p&gt;Hoping this site is a handy tool for how to do things on a
-computer.&lt;/p&gt;
 </description>
     </item>
     
