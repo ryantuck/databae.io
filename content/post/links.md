@@ -8,3 +8,5 @@ Finally, a place for cool links.
 
 - [colormind.io](http://colormind.io)
 - [computers-are-fast.github.io](http://computers-are-fast.github.io)
+- [sicp](http://sarabander.github.io/sicp/)
+- [bash tips](http://jvns.ca/blog/2017/03/26/bash-quirks/)
